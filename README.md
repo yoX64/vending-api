@@ -1,1 +1,3 @@
-# vending-api
+# Vending API
+
+An API for vending machines.
