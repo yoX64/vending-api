@@ -16,6 +16,8 @@ class AuthServiceProvider extends ServiceProvider
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
     ];
 
+    public const ABILITY_BUY = 'buy';
+
     /**
      * Register any authentication / authorization services.
      *
