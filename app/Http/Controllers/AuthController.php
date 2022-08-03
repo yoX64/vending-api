@@ -14,7 +14,11 @@ class AuthController extends Controller
     public function login(AuthLoginRequest $request): JsonResponse
     {
         if (!Auth::attempt($request->validated())) {
-            return Response::json(['error' => 'Invalid credentials'], 401);
+            return Response::json(['error' => 'Invalid credentials'], \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST);
+        }
+
+        if (Auth::user()->tokens()->count() > 0) {
+            return Response::json(['error' => 'User already has tokens created. Call /logout first.'], \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST);
         }
 
         /** @var User $user */
@@ -22,5 +26,12 @@ class AuthController extends Controller
         $token = $user->createToken($user->name, $user->abilities ?? [], Carbon::now()->addDays(7));
 
         return Response::json($token);
+    }
+
+    public function logout(): \Illuminate\Http\Response
+    {
+        Auth::user()->tokens()->delete();
+
+        return Response::noContent();
     }
 }
