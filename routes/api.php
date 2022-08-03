@@ -32,3 +32,4 @@ Route::middleware('auth:sanctum')->delete('/products/{id}', [ProductsController:
 
 Route::middleware('auth:sanctum')->post('/deposit', [TransactionController::class, 'deposit']);
 Route::middleware('auth:sanctum')->post('/buy', [TransactionController::class, 'buy']);
+Route::middleware('auth:sanctum')->post('/reset', [TransactionController::class, 'reset']);
