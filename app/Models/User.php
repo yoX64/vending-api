@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,6 +22,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string|array|null $abilities
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @property-read Collection|Product[] $products
  */
 class User extends Authenticatable
 {
@@ -69,6 +72,6 @@ class User extends Authenticatable
 
     public function products(): HasMany
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Product::class, 'seller_id');
     }
 }
