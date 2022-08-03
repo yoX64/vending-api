@@ -19,7 +19,7 @@ class AuthController extends Controller
 
         /** @var User $user */
         $user = User::query()->where('email', $request->get('email'))->firstOrFail();
-        $token = $user->createToken($user->name, json_decode($user->abilities), Carbon::now()->addDays(7));
+        $token = $user->createToken($user->name, $user->abilities, Carbon::now()->addDays(7));
 
         return Response::json($token);
     }

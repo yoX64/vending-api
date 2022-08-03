@@ -2,19 +2,18 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\AbilitiesRule;
 use Illuminate\Contracts\Validation\Validator;
-use \Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
-class AuthLoginRequest extends FormRequest
+class UsersStoreResource extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -27,8 +26,10 @@ class AuthLoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'email'],
-            'password' => 'required',
+            'name' => ['required', 'string','max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'password' => ['required', 'string', 'max:255'],
+            'abilities' => ['required', 'string', new AbilitiesRule()],
         ];
     }
 
