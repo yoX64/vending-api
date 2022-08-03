@@ -66,4 +66,23 @@ class TransactionController extends Controller
             'total_remaining' => $user->deposit,
         ]);
     }
+
+    public function reset(): \Illuminate\Http\Response|JsonResponse
+    {
+        if (!in_array(AuthServiceProvider::ABILITY_BUY, Auth::user()->abilities ?? [])) {
+            return Response::json(['error' => 'You are not allowed to reset'],
+                \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN);
+        }
+
+        try {
+            $user = Auth::user();
+            $user->deposit = 0;
+            $user->save();
+        } catch (\Exception $e) {
+            return Response::json(['error' => $e->getMessage()],
+                \Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return Response::noContent();
+    }
 }
