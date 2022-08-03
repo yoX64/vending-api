@@ -2,13 +2,12 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\DividentOfFiveRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductsStoreRequest extends FormRequest
+class TransactionBuyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,9 +27,8 @@ class ProductsStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'cost' => ['required', 'numeric', 'min:0', new DividentOfFiveRule()],
-            'amount_available' => ['required', 'numeric', 'min:0'],
+            'product_id' => ['required','integer', 'exists:products,id'],
+            'amount' => ['required','integer', 'min:1'],
         ];
     }
 

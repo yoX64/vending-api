@@ -31,3 +31,4 @@ Route::middleware('auth:sanctum')->put('/products/{id}', [ProductsController::cl
 Route::middleware('auth:sanctum')->delete('/products/{id}', [ProductsController::class, 'destroy']);
 
 Route::middleware('auth:sanctum')->post('/deposit', [TransactionController::class, 'deposit']);
+Route::middleware('auth:sanctum')->post('/buy', [TransactionController::class, 'buy']);
