@@ -3,7 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Rules\DepositCostRequest;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpFoundation\Response;
 
 class TransactionDepositRequest extends FormRequest
 {
@@ -28,5 +31,17 @@ class TransactionDepositRequest extends FormRequest
             'user_id' => ['required', 'exists:users,id'],
             'amount' => ['required', 'numeric', 'min:5', new DepositCostRequest()],
         ];
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     *
+     */
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json(
+            ['error' => $validator->errors()->first()],
+            Response::HTTP_UNPROCESSABLE_ENTITY
+        ));
     }
 }
