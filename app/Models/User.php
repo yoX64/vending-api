@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,7 +18,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $password
  * @property string|null $remember_token
  * @property int $deposit
- * @property string|null $abilities
+ * @property string|array|null $abilities
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -56,6 +56,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the user's first name.
+     */
+    protected function abilities(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+        );
+    }
 
     public function products(): HasMany
     {
