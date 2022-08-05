@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductsStoreRequest;
 use App\Http\Requests\ProductsUpdateRequest;
 use App\Models\Product;
+use App\Providers\AuthServiceProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -27,6 +28,10 @@ class ProductsController extends Controller
      */
     public function store(ProductsStoreRequest $request): JsonResponse
     {
+        if (!in_array(AuthServiceProvider::ABILITY_SELL, Auth::user()->abilities ?? [])) {
+            return Response::json(['error' => 'You are not allowed to create a product'], \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN);
+        }
+
         try {
             $product = new Product;
             $product->seller_id = Auth::id();
@@ -56,6 +61,10 @@ class ProductsController extends Controller
      */
     public function update(ProductsUpdateRequest $request, $id): jsonResponse
     {
+        if (!in_array(AuthServiceProvider::ABILITY_SELL, Auth::user()->abilities ?? [])) {
+            return Response::json(['error' => 'You are not allowed to update a product'], \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN);
+        }
+
         try {
             /** @var Product $product */
             $product = Product::query()->findOrFail($id);
@@ -80,6 +89,10 @@ class ProductsController extends Controller
      */
     public function destroy($id): \Illuminate\Http\Response|JsonResponse
     {
+        if (!in_array(AuthServiceProvider::ABILITY_SELL, Auth::user()->abilities ?? [])) {
+            return Response::json(['error' => 'You are not allowed to delete a product'], \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN);
+        }
+
         try {
             /** @var Product $product */
             $product = Product::query()->findOrFail($id);

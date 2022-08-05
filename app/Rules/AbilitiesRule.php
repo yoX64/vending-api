@@ -27,7 +27,7 @@ class AbilitiesRule implements Rule
     public function passes($attribute, $value): bool
     {
         return collect(json_decode($value))->filter(function ($ability) {
-            return !in_array($ability, [AuthServiceProvider::ABILITY_BUY]);
+            return !in_array($ability, [AuthServiceProvider::ABILITY_BUY, AuthServiceProvider::ABILITY_SELL]);
         })->isEmpty();
     }
 

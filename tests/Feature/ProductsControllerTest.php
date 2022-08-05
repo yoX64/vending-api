@@ -12,12 +12,7 @@ class ProductsControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_create_product()
+    public function test_create_product_bad_ability()
     {
         $productName = fake()->name();
         $productCost = 10;
@@ -26,6 +21,28 @@ class ProductsControllerTest extends TestCase
         /** @var User $user */
         $user = User::factory()->state([
             'abilities' => json_encode([AuthServiceProvider::ABILITY_BUY]),
+        ])->create();
+
+        $response = $this->actingAs($user)->withHeaders([
+            'Accept' => 'application/json',
+        ])->post('/api/products', [
+            'name' => $productName,
+            'cost' => $productCost,
+            'amount_available' => $productAmountAvailable
+        ]);
+
+        $response->assertJson(['error' => 'You are not allowed to create a product']);
+    }
+
+    public function test_create_product_successfully()
+    {
+        $productName = fake()->name();
+        $productCost = 10;
+        $productAmountAvailable = fake()->numberBetween(1, 100);
+
+        /** @var User $user */
+        $user = User::factory()->state([
+            'abilities' => json_encode([AuthServiceProvider::ABILITY_SELL]),
         ])->create();
 
         $response = $this->actingAs($user)->withHeaders([

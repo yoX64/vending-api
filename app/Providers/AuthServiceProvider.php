@@ -17,6 +17,7 @@ class AuthServiceProvider extends ServiceProvider
     ];
 
     public const ABILITY_BUY = 'buy';
+    public const ABILITY_SELL = 'sell';
 
     /**
      * Register any authentication / authorization services.
