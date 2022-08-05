@@ -42,6 +42,25 @@ class TransactionControllerTest extends TestCase
         $response->assertJson(['error' => 'You are not allowed to deposit']);
     }
 
+    public function test_deposit_bad_ability(): void
+    {
+        $depositAmount = 10;
+
+        /** @var User $user */
+        $user = User::factory()->state([
+            'abilities' => json_encode([AuthServiceProvider::ABILITY_SELL]),
+        ])->create();
+
+        $response = $this->actingAs($user)->withHeaders([
+            'Accept' => 'application/json',
+        ])->post('/api/deposit', [
+            'user_id' => $user->id,
+            'amount' => $depositAmount,
+        ]);
+
+        $response->assertJson(['error' => 'You are not allowed to deposit']);
+    }
+
     public function test_deposit_bad_amount(): void
     {
         $depositAmount = 9;
@@ -104,6 +123,34 @@ class TransactionControllerTest extends TestCase
         $user = User::factory()
             ->state([
                 'abilities' => json_encode([]),
+            ])
+            ->has($product)
+            ->create();
+
+        $response = $this->actingAs($user)->withHeaders([
+            'Accept' => 'application/json',
+        ])->post('/api/buy', [
+            'product_id' => $user->products->first()->id,
+            'amount' => $amountBought,
+        ]);
+
+        $response->assertJson(['error' => 'You are not allowed to buy']);
+    }
+
+    public function test_buy_bad_ability(): void
+    {
+        $amountAvailable = 10;
+        $amountBought = 10;
+
+        /** @var Factory $product */
+        $product = Product::factory()->state([
+            'amount_available' => $amountAvailable,
+        ])->count(1);
+
+        /** @var User $user */
+        $user = User::factory()
+            ->state([
+                'abilities' => json_encode([AuthServiceProvider::ABILITY_SELL]),
             ])
             ->has($product)
             ->create();
