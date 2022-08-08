@@ -6,12 +6,17 @@ use App\Http\Requests\TransactionBuyRequest;
 use App\Http\Requests\TransactionDepositRequest;
 use App\Models\Product;
 use App\Providers\AuthServiceProvider;
+use App\Services\CoinChangeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
 class TransactionController extends Controller
 {
+    public function __construct(private CoinChangeService $coinChangeService)
+    {
+    }
+
     public function deposit(TransactionDepositRequest $request): \Illuminate\Http\Response|JsonResponse
     {
         if (!in_array(AuthServiceProvider::ABILITY_BUY, Auth::user()->abilities ?? [])) {
@@ -29,7 +34,7 @@ class TransactionController extends Controller
         return Response::noContent();
     }
 
-    public function buy(TransactionBuyRequest $request): \Illuminate\Http\Response|JsonResponse
+    public function buy(TransactionBuyRequest $request)
     {
         if (!in_array(AuthServiceProvider::ABILITY_BUY, Auth::user()->abilities ?? [])) {
             return Response::json(['error' => 'You are not allowed to buy'],
@@ -64,6 +69,7 @@ class TransactionController extends Controller
             'product_purchased' => $product->name,
             'total_spent' => $totalCost,
             'total_remaining' => $user->deposit,
+            'change' => $this->coinChangeService->calculate($user->deposit),
         ]);
     }
 

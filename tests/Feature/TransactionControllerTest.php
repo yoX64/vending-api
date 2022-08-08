@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Product;
 use App\Models\User;
 use App\Providers\AuthServiceProvider;
+use App\Services\CoinChangeService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response;
@@ -286,6 +287,7 @@ class TransactionControllerTest extends TestCase
             'product_purchased' => $user->products->first()->name,
             'total_spent' => $productCost * $amountBought,
             'total_remaining' => $depositValue - ($productCost * $amountBought),
+            'change' => (new CoinChangeService())->calculate($depositValue - ($productCost * $amountBought)),
         ]);
     }
 }
